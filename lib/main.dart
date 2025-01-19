@@ -101,9 +101,9 @@ class CreditScorePainter extends CustomPainter {
     // Draw gauge arc
     final colors = [
       Colors.red,
-      Colors.orange,
-      Colors.yellow.shade300,
-      Colors.yellow.shade700,
+      Colors.red.shade200,
+      Colors.yellow.shade400,
+      Colors.yellow.shade600,
       Colors.lightGreen,
       Colors.green,
     ];
@@ -111,8 +111,8 @@ class CreditScorePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 25;
 
-    double startAngle = pi; // Start from the left
-    const sweepAngle = pi / 5; // Divide into five sections
+    double startAngle = pi;
+    const sweepAngle = pi / 6;
 
     for (var color in colors) {
       paint.color = color;
