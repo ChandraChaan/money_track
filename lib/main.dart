@@ -1,125 +1,200 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
-  runApp(const MyApp());
+  runApp(CreditScoreApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class CreditScoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      home: CreditScoreScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class CreditScoreScreen extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _CreditScoreScreenState createState() => _CreditScoreScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _CreditScoreScreenState extends State<CreditScoreScreen>
+    with SingleTickerProviderStateMixin {
+  double _currentValue = 300;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  @override
+  void initState() {
+    super.initState();
+    // Simulate smooth transition to a target score (e.g., 720)
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _currentValue = 720;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('CIBIL Credit Score'),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: CreditScoreIndicator(
+          score: _currentValue,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+class CreditScoreIndicator extends StatelessWidget {
+  final double score;
+
+  CreditScoreIndicator({required this.score});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CustomPaint(
+          size: const Size(300, 150),
+          painter: CreditScorePainter(score),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'CIBIL SCORE',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[700],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          score.toInt().toString(),
+          style: const TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueAccent,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CreditScorePainter extends CustomPainter {
+  final double score;
+
+  CreditScorePainter(this.score);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height);
+    final radius = size.height;
+
+    // Draw gauge arc
+    final colors = [
+      Colors.red,
+      Colors.orange,
+      Colors.yellow,
+      Colors.lightGreen,
+      Colors.green,
+    ];
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 15;
+
+    double startAngle = pi; // Start from the left
+    const sweepAngle = pi / 5; // Divide into five sections
+
+    for (var color in colors) {
+      paint.color = color;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius - 15),
+        startAngle,
+        sweepAngle,
+        false,
+        paint,
+      );
+      startAngle += sweepAngle;
+    }
+
+    // Draw the needle
+    final needlePaint = Paint()
+      ..color = Colors.blueAccent
+      ..strokeWidth = 4;
+
+    final needleAngle = pi + (score / 900) * pi;
+    final needleEnd = Offset(
+      center.dx + (radius - 30) * cos(needleAngle),
+      center.dy + (radius - 30) * sin(needleAngle),
+    );
+
+    canvas.drawLine(center, needleEnd, needlePaint);
+
+    // Draw the knob
+    canvas.drawCircle(center, 8, Paint()..color = Colors.blueAccent);
+
+    // Draw text labels above the gauge
+    _drawTextLabelsAbove(canvas, size, center, radius);
+  }
+
+  void _drawTextLabelsAbove(Canvas canvas, Size size, Offset center, double radius) {
+    final labels = ["VERY POOR", "POOR", "FAIR", "GOOD", "VERY GOOD", "EXCELLENT"];
+    final totalAngle = pi; // Total arc angle
+    final labelAngle = totalAngle / (labels.length - 1);
+    final labelRadius = radius + 20; // Move labels slightly outside the arc
+
+    for (int i = 0; i < labels.length; i++) {
+      final angle = pi + (i * labelAngle); // Calculate angle for each label
+      final x = center.dx + labelRadius * cos(angle);
+      final y = center.dy + labelRadius * sin(angle);
+
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: labels[i],
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
+
+      textPainter.layout();
+
+      // Offset for proper label placement
+      final offsetX = x - textPainter.width / 2;
+      final offsetY = y - textPainter.height / 2;
+
+      canvas.save();
+      // Translate to the position of the label
+      canvas.translate(offsetX + textPainter.width / 2, offsetY + textPainter.height / 2);
+
+      // Adjust rotation for readable text
+      if (angle > pi && angle <= pi * 1.5) {
+        // Right side (GOOD, VERY GOOD, EXCELLENT)
+        canvas.rotate(angle - pi / 2);
+      } else {
+        // Left side (VERY POOR, POOR, FAIR)
+        canvas.rotate(angle - pi / 2 + pi);
+      }
+
+      // Center the text painter after rotation
+      canvas.translate(-textPainter.width / 2, -textPainter.height / 2);
+      textPainter.paint(canvas, Offset.zero);
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
