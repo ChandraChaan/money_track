@@ -22,7 +22,7 @@ class CreditScoreScreen extends StatefulWidget {
 
 class _CreditScoreScreenState extends State<CreditScoreScreen>
     with SingleTickerProviderStateMixin {
-  double _currentValue = 300;
+  double _currentValue = 00;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _CreditScoreScreenState extends State<CreditScoreScreen>
     // Simulate smooth transition to a target score (e.g., 720)
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
-        _currentValue = 720;
+        _currentValue = 790;
       });
     });
   }
@@ -65,7 +65,7 @@ class CreditScoreIndicator extends StatelessWidget {
           size: const Size(300, 150),
           painter: CreditScorePainter(score),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 50),
         Text(
           'CIBIL SCORE',
           style: TextStyle(
@@ -129,18 +129,41 @@ class CreditScorePainter extends CustomPainter {
     // Draw the needle
     final needlePaint = Paint()
       ..color = Colors.blueAccent
-      ..strokeWidth = 4;
+      ..strokeWidth = 6
+      ..style = PaintingStyle.fill;
 
     final needleAngle = pi + (score / 900) * pi;
+    final needleStart = Offset(
+      center.dx + 10 * cos(needleAngle - pi / 2),
+      center.dy + 10 * sin(needleAngle - pi / 2),
+    );
     final needleEnd = Offset(
       center.dx + (radius - 30) * cos(needleAngle),
       center.dy + (radius - 30) * sin(needleAngle),
     );
 
-    canvas.drawLine(center, needleEnd, needlePaint);
+    // Draw the needle with a tapered style (big to slim)
+    final needlePath = Path()
+      ..moveTo(needleStart.dx, needleStart.dy)
+      ..lineTo(
+          center.dx + 11 * cos(needleAngle - pi / 6),
+          center.dy + 11 * sin(needleAngle - pi / 6))
+      ..lineTo(needleEnd.dx, needleEnd.dy)
+      ..lineTo(
+          center.dx + 11 * cos(needleAngle + pi / 6),
+          center.dy + 11 * sin(needleAngle + pi / 6))
+      ..close();
+
+    canvas.drawPath(needlePath, needlePaint);
 
     // Draw the knob
-    canvas.drawCircle(center, 8, Paint()..color = Colors.blueAccent);
+    final knobPaint = Paint()
+      ..color = Colors.blueAccent
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    canvas.drawCircle(center, 30, knobPaint);
+    canvas.drawCircle(center, 11, Paint()..color = Colors.blueAccent);
 
     // Draw text labels above the gauge
     _drawTextLabelsAbove(canvas, size, center, radius);
