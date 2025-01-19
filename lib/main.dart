@@ -102,13 +102,14 @@ class CreditScorePainter extends CustomPainter {
     final colors = [
       Colors.red,
       Colors.orange,
-      Colors.yellow,
+      Colors.yellow.shade300,
+      Colors.yellow.shade700,
       Colors.lightGreen,
       Colors.green,
     ];
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 15;
+      ..strokeWidth = 25;
 
     double startAngle = pi; // Start from the left
     const sweepAngle = pi / 5; // Divide into five sections
@@ -147,16 +148,9 @@ class CreditScorePainter extends CustomPainter {
 
   void _drawTextLabelsAbove(
       Canvas canvas, Size size, Offset center, double radius) {
-    final labels = [
-      "VERY POOR",
-      "POOR",
-      "FAIR",
-      "GOOD",
-      "VERY GOOD",
-      "EXCELLENT"
-    ];
+    final labels = ["VERY POOR", "POOR", "FAIR", "GOOD", "VERY GOOD", "EXCELLENT"];
     const totalAngle = pi; // Total arc angle
-    final labelAngle = totalAngle / (labels.length - 1);
+    final labelAngle = totalAngle / (labels.length - 0.8);
     final labelRadius = radius + 10; // Move labels slightly outside the arc
 
     for (int i = 0; i < labels.length; i++) {
