@@ -145,11 +145,19 @@ class CreditScorePainter extends CustomPainter {
     _drawTextLabelsAbove(canvas, size, center, radius);
   }
 
-  void _drawTextLabelsAbove(Canvas canvas, Size size, Offset center, double radius) {
-    final labels = ["VERY POOR", "POOR", "FAIR", "GOOD", "VERY GOOD", "EXCELLENT"];
-    final totalAngle = pi; // Total arc angle
+  void _drawTextLabelsAbove(
+      Canvas canvas, Size size, Offset center, double radius) {
+    final labels = [
+      "VERY POOR",
+      "POOR",
+      "FAIR",
+      "GOOD",
+      "VERY GOOD",
+      "EXCELLENT"
+    ];
+    const totalAngle = pi; // Total arc angle
     final labelAngle = totalAngle / (labels.length - 1);
-    final labelRadius = radius + 20; // Move labels slightly outside the arc
+    final labelRadius = radius + 10; // Move labels slightly outside the arc
 
     for (int i = 0; i < labels.length; i++) {
       final angle = pi + (i * labelAngle); // Calculate angle for each label
@@ -177,12 +185,13 @@ class CreditScorePainter extends CustomPainter {
 
       canvas.save();
       // Translate to the position of the label
-      canvas.translate(offsetX + textPainter.width / 2, offsetY + textPainter.height / 2);
+      canvas.translate(
+          offsetX + textPainter.width / 2, offsetY + textPainter.height / 2);
 
       // Adjust rotation for readable text
       if (angle > pi && angle <= pi * 1.5) {
         // Right side (GOOD, VERY GOOD, EXCELLENT)
-        canvas.rotate(angle - pi / 2);
+        canvas.rotate(angle - pi / 2 + 22);
       } else {
         // Left side (VERY POOR, POOR, FAIR)
         canvas.rotate(angle - pi / 2 + pi);
